@@ -110,11 +110,3 @@ This project is for educational and internship purposes only.
 
 
 ---
-
-## ✅ What to Do Next
-After adding this README:
-
-```bash
-git add README.md
-git commit -m "Add project README"
-git push
