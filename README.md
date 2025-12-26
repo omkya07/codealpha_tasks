@@ -4,7 +4,7 @@ This repository contains the tasks and project work completed as part of the **C
 The main project in this repository is a **Social Media Application** built using modern web technologies.
 
 ---
-
+```
 ## 📁 Project Structure
 
 codealpha_tasks/
@@ -13,7 +13,7 @@ codealpha_tasks/
 ├── .gitignore
 └── README.md
 
-
+```
 ---
 
 ## 🚀 Technologies Used
