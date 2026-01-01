@@ -9,8 +9,20 @@ const postSchema = new mongoose.Schema({
   content: {
     type: String,
     required: true,
-    maxlength: 1000
+    maxlength: 2000
   },
+  media: {
+    url: {
+      type: String,
+      default: ''
+    },
+    type: {
+      type: String,
+      enum: ['image', 'video', 'none'],
+      default: 'none'
+    }
+  },
+  // Keep old image field for backward compatibility
   image: {
     type: String,
     default: ''

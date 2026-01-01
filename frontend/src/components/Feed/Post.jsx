@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { postAPI, commentAPI } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
-import CommentSection from '../Comments/CommentSection';
+import { useNavigate } from 'react-router-dom';
 
 const Post = ({ post: initialPost, onDelete }) => {
   const [post, setPost] = useState(initialPost);
@@ -10,6 +10,7 @@ const Post = ({ post: initialPost, onDelete }) => {
   const [commentText, setCommentText] = useState('');
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const isOwner = user?.id === post.user._id;
 
@@ -99,16 +100,21 @@ const Post = ({ post: initialPost, onDelete }) => {
 
   const isLiked = post.likes?.includes(user?.id);
 
+  const goToProfile = (userId) => {
+    navigate(`/profile/${userId}`);
+  };
+
   return (
     <div className="post">
       <div className="post-header">
         <img 
-          src={post.user.profileImage || 'https://via.placeholder.com/48'} 
+          src={post.user.profileImage || 'https://via.placeholder.com/38'} 
           alt={post.user.username}
           className="post-avatar"
+          onClick={() => goToProfile(post.user._id)}
         />
         <div className="post-user-info">
-          <h4>{post.user.username}</h4>
+          <h4 onClick={() => goToProfile(post.user._id)}>{post.user.username}</h4>
           <p>{formatDate(post.createdAt)}</p>
         </div>
         {isOwner && (
@@ -122,17 +128,28 @@ const Post = ({ post: initialPost, onDelete }) => {
         )}
       </div>
 
+      {/* Content First - Instagram Style */}
       <div className="post-content">
         <p>{post.content}</p>
       </div>
 
-      {post.image && (
-        <img 
-          src={post.image} 
-          alt="Post" 
-          className="post-image"
-          onError={(e) => e.target.style.display = 'none'}
-        />
+      {/* Media Display */}
+      {post.media && post.media.url && post.media.type !== 'none' && (
+        <div>
+          {post.media.type === 'image' ? (
+            <img 
+              src={post.media.url} 
+              alt="Post media" 
+              className="post-media"
+            />
+          ) : post.media.type === 'video' ? (
+            <video 
+              src={post.media.url} 
+              controls 
+              className="post-media"
+            />
+          ) : null}
+        </div>
       )}
 
       <div className="post-actions">
@@ -141,7 +158,7 @@ const Post = ({ post: initialPost, onDelete }) => {
           className={`post-action-btn ${isLiked ? 'liked' : ''}`}
         >
           <span>{isLiked ? '❤️' : '🤍'}</span>
-          <span>{post.likesCount || 0} Likes</span>
+          <span>{post.likesCount || 0}</span>
         </button>
 
         <button 
@@ -149,7 +166,7 @@ const Post = ({ post: initialPost, onDelete }) => {
           className="post-action-btn"
         >
           <span>💬</span>
-          <span>{post.commentsCount || 0} Comments</span>
+          <span>{post.commentsCount || 0}</span>
         </button>
       </div>
 
@@ -173,20 +190,21 @@ const Post = ({ post: initialPost, onDelete }) => {
           {comments.map(comment => (
             <div key={comment._id} className="comment">
               <img 
-                src={comment.user.profileImage || 'https://via.placeholder.com/36'} 
+                src={comment.user.profileImage || 'https://via.placeholder.com/32'} 
                 alt={comment.user.username}
                 className="comment-avatar"
               />
-              <div className="comment-content">
-                <div className="comment-user">{comment.user.username}</div>
-                <div className="comment-text">{comment.text}</div>
+              <div style={{ flex: 1 }}>
+                <div className="comment-content">
+                  <div className="comment-user">{comment.user.username}</div>
+                  <div className="comment-text">{comment.text}</div>
+                </div>
                 <div className="comment-time">{formatDate(comment.createdAt)}</div>
               </div>
               {user?.id === comment.user._id && (
                 <button 
                   onClick={() => handleDeleteComment(comment._id)}
                   className="btn btn-danger btn-sm"
-                  style={{ marginLeft: 'auto' }}
                 >
                   Delete
                 </button>
